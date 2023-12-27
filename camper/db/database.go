@@ -32,6 +32,7 @@ func InitDB() {
 func CloseDB() {
 	db.Close()
 	fmt.Println("Closed database connection")
+	return
 }
 
 func AddWebsite(website *models.Website) error {
@@ -85,4 +86,31 @@ func UpdateHashResult(result string, cronJobID string, id int) error {
 	}
 
 	return nil
+}
+
+func QueryInterval(interval int) {
+
+	// Replace the query logic with your actual database query
+	rows, err := db.Query("SELECT * FROM websites WHERE time % ? = 0", interval)
+	if err != nil {
+		log.Println("Error querying database:", err)
+		return
+	}
+	defer rows.Close()
+
+	var websites []models.Website
+
+	for rows.Next() {
+		var website models.Website
+		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time, &website.Cron_Job_Id)
+		if err != nil {
+			log.Println("Error scanning website:", err)
+			return
+		}
+		if website.Time == interval {
+			websites = append(websites, website)
+		}
+
+	}
+	fmt.Println("Queried", len(websites), websites)
 }

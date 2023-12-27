@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"golang.org/x/net/html"
@@ -16,7 +15,7 @@ import (
 var (
 	websiteURL     = "http://127.0.0.1:5500/test.html"
 	websiteURLChan = make(chan string, 1)
-	mu             sync.Mutex
+	// mu             sync.Mutex
 )
 
 // func hello() {
