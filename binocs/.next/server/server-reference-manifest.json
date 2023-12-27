@@ -1,0 +1,31 @@
+{
+  "node": {
+    "541a3f831db7d78177a9fb5bfdc0bed863c84c8a": {
+      "workers": {
+        "app/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fayaan%2FDesktop%2FCoding%2Fstalkr%2Fbinocs%2Fsrc%2Fapp%2Fpage.tsx%22%2C%5B%22%24%24ACTION_0%22%5D%5D%5D&__client_imported__=!"
+      },
+      "layer": {
+        "app/page": "rsc"
+      }
+    }
+  },
+  "edge": {
+    "a7695acce77f54a206d0ad9434d185eee20a5f60": {
+      "workers": {
+        "app/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fayaan%2FDesktop%2FCoding%2Fstalkr%2Fbinocs%2Fsrc%2Fapp%2Factions.ts%22%2C%5B%22createTodo%22%2C%22deleteTodo%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    },
+    "fcb67f9063044332837aceb2ed333b1c23157139": {
+      "workers": {
+        "app/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fayaan%2FDesktop%2FCoding%2Fstalkr%2Fbinocs%2Fsrc%2Fapp%2Factions.ts%22%2C%5B%22createTodo%22%2C%22deleteTodo%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    }
+  },
+  "encryptionKey": "ZB7Fu3UJbrEanokD5EXOR1siXy2ddFMxZlFY4JhBweY="
+}
