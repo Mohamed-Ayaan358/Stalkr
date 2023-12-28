@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"camper/functions"
 	"camper/models"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -36,7 +37,7 @@ func CloseDB() {
 }
 
 func AddWebsite(website *models.Website) error {
-	_, err := db.Exec("INSERT INTO websites (name, url, hash, time, cron_job_id) VALUES (?, ?, ?, ?, ?)", website.Name, website.URL, website.Hash, website.Time, website.Cron_Job_Id)
+	_, err := db.Exec("INSERT INTO websites (name, url, hash, time) VALUES (?, ?, ?, ?)", website.Name, website.URL, website.Hash, website.Time)
 	if err != nil {
 		log.Println("Error adding website:", err)
 		return err
@@ -57,7 +58,7 @@ func GetWebsites() ([]models.Website, error) {
 
 	for rows.Next() {
 		var website models.Website
-		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time, &website.Cron_Job_Id)
+		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time)
 		if err != nil {
 			log.Println("Error scanning website:", err)
 			return nil, err
@@ -78,16 +79,6 @@ func DeleteWebsite(websiteID int) error {
 	return nil
 }
 
-func UpdateHashResult(result string, cronJobID string, id int) error {
-	_, err := db.Exec("UPDATE websites SET hash= ?, cron_job_id = ? WHERE id = ?", result, cronJobID, id)
-	if err != nil {
-		log.Println("Error updating hash result in the database:", err)
-		return err
-	}
-
-	return nil
-}
-
 func QueryInterval(interval int) {
 
 	// Replace the query logic with your actual database query
@@ -102,12 +93,21 @@ func QueryInterval(interval int) {
 
 	for rows.Next() {
 		var website models.Website
-		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time, &website.Cron_Job_Id)
+
+		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time)
 		if err != nil {
 			log.Println("Error scanning website:", err)
 			return
+
 		}
+
 		if website.Time == interval {
+
+			var potentHash, _ = functions.CalculateWebsiteHash(website.URL)
+			if website.Hash != potentHash {
+				fmt.Printf("Previos hash %x\nContent Hash (SHA-256): %x\n", website.Hash, potentHash)
+				db.Exec("UPDATE websites SET hash = ? WHERE id = ?", potentHash, website.ID)
+			}
 			websites = append(websites, website)
 		}
 

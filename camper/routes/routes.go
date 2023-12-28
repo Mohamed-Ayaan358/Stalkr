@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"camper/db"
+	database "camper/db"
 	"camper/models"
 )
 
@@ -30,7 +30,7 @@ func GetWebsites(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get websites from the database", http.StatusInternalServerError)
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(websites)
@@ -81,6 +81,5 @@ func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Website deleted successfully"))
 }
-
 
 // Put in a function that can be used to add or get methods  in ordee to derive a hash from a website

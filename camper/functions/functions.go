@@ -1,35 +1,32 @@
-package main
+package functions
 
 import (
 	"crypto/sha256"
-	"io/ioutil"
+	"encoding/hex"
+	"io"
 	"net/http"
 	"strings"
 
 	"golang.org/x/net/html"
 )
 
-func calculateWebsiteHash(url string) ([32]byte, error) {
+func CalculateWebsiteHash(url string) (string, error) {
 	// Make an HTTP GET request to the specified URL
 	response, err := http.Get(url)
 	if err != nil {
-		return [32]byte{}, err
+		return "", err
 	}
 	defer response.Body.Close()
 
-	// Read the content of the response body
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return [32]byte{}, err
+		return "", err
 	}
-
-	// Clean up the HTML
 	cleanedHTML := cleanHTML(string(body))
 
-	// Calculate the SHA-256 hash of the cleaned HTML
 	hash := sha256.Sum256([]byte(cleanedHTML))
 
-	return hash, nil
+	return hex.EncodeToString(hash[:]), nil
 }
 
 // cleanHTML removes unnecessary elements from HTML, like whitespace and comments

@@ -26,7 +26,6 @@ var (
 func main() {
 	database.InitDB()
 	routes.SetupRoutes()
-
 	wg.Add(2)
 	go startTimer()
 	go startHTTPServer()
