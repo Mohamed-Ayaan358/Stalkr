@@ -4,17 +4,23 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"sync"
 
 	database "camper/db"
 	"camper/models"
+
+	"github.com/gorilla/websocket"
 )
 
 func SetupRoutes() {
 	http.HandleFunc("/add", AddWebsite)
 	http.HandleFunc("/delete", DeleteWebsite)
 	http.HandleFunc("/websites", GetWebsites)
+	http.HandleFunc("/ws", handleWebSocket)
 }
 
 // Add one yourself to obtain all the websites in the database
@@ -82,4 +88,48 @@ func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Website deleted successfully"))
 }
 
-// Put in a function that can be used to add or get methods  in ordee to derive a hash from a website
+// ------------------------------------------
+
+var (
+	WsConn   *websocket.Conn
+	WsMutex  sync.Mutex
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+)
+
+func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("Error upgrading to WebSocket: %v", err)
+		return
+	}
+	defer conn.Close()
+
+	WsMutex.Lock()
+	WsConn = conn
+	WsMutex.Unlock()
+
+	for {
+		messageType, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("Error reading message: %v", err)
+			return
+		}
+
+		// Print received message from client
+		fmt.Printf("Received from client: %s\n", p)
+
+		// Write "hello" back to the client
+		if err := conn.WriteMessage(messageType, []byte("hello from server")); err != nil {
+			log.Printf("Error writing message: %v", err)
+			return
+		}
+	}
+}
+
+// It worked for ws://localhost:8080/ws

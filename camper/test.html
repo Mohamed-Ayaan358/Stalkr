@@ -4,19 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alert Test Page</title>
+    <title>WebSocket Client</title>
 </head>
 
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a test page for Golang program.</p>
-    <p>This is a test page for Golang program.</p>
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws", 'echo-protocol');
 
+        // Connection opened
+        socket.addEventListener("open", (event) => {
+            console.log("Connected to WebSocket server");
 
+            // Send a message to the server
+            socket.send("hello from client");
+        });
 
+        // Listen for messages from the server
+        socket.addEventListener("message", (event) => {
+            console.log("Received from server: ", event.data);
+        });
 
-
-
+        // Connection closed
+        socket.addEventListener("close", (event) => {
+            console.log("Connection closed");
+        });
+    </script>
 </body>
 
 </html>

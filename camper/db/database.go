@@ -105,7 +105,7 @@ func QueryInterval(interval int) {
 
 			var potentHash, _ = functions.CalculateWebsiteHash(website.URL)
 			if website.Hash != potentHash {
-				fmt.Printf("Previos hash %x\nContent Hash (SHA-256): %x\n", website.Hash, potentHash)
+				fmt.Printf("Previous hash %x\nContent Hash (SHA-256): %x\n", website.Hash, potentHash)
 				db.Exec("UPDATE websites SET hash = ? WHERE id = ?", potentHash, website.ID)
 			}
 			websites = append(websites, website)
