@@ -58,7 +58,7 @@ func GetWebsites() ([]models.Website, error) {
 
 	for rows.Next() {
 		var website models.Website
-		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time)
+		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time, &website.Changed)
 		if err != nil {
 			log.Println("Error scanning website:", err)
 			return nil, err
@@ -92,7 +92,7 @@ func QueryInterval(interval int) []models.Website {
 	for rows.Next() {
 		var website models.Website
 
-		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time)
+		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time, &website.Changed)
 		if err != nil {
 			log.Println("Error scanning website:", err)
 			return []models.Website{}
@@ -104,7 +104,9 @@ func QueryInterval(interval int) []models.Website {
 			var potentHash, _ = functions.CalculateWebsiteHash(website.URL)
 			if website.Hash != potentHash {
 				fmt.Println("Previous hash : ", website.Hash)
-				db.Exec("UPDATE websites SET hash = ? WHERE id = ?", potentHash, website.ID)
+				db.Exec("UPDATE websites SET hash = ?,changed = ? WHERE id = ?", potentHash, true, website.ID)
+			} else {
+				db.Exec("UPDATE websites SET changed = ? WHERE id = ?", false, website.ID)
 			}
 		}
 		websites = append(websites, website)

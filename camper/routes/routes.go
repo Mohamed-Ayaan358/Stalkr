@@ -130,7 +130,9 @@ func SendMessageToClient(message int) {
 	WsMutex.Lock()
 	defer WsMutex.Unlock()
 
-	jsonified, _ := json.Marshal(database.QueryInterval(message))
+	database.QueryInterval(message)
+	websites, _ := database.GetWebsites()
+	jsonified, _ := json.Marshal(websites)
 
 	if WsConn != nil {
 		err := WsConn.WriteMessage(websocket.TextMessage, jsonified)

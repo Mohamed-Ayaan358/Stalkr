@@ -24,10 +24,18 @@ export default function Home() {
         <ul>
           {websocketData.map((website, index) => (
             <li key={index}>
-              <strong>ID:</strong> {website.id},<strong>Name:</strong>{" "}
-              {website.name},<strong>URL:</strong> {website.url},
-              <strong>Hash:</strong> {website.hash},<strong>Time:</strong>{" "}
-              {website.time}
+              <strong>ID:</strong> {website.id}
+              <br></br>
+              <strong>Name:</strong> {website.name}
+              <br></br>
+              <strong>URL:</strong> {website.url}
+              <br></br>
+              <strong>Hash:</strong> {website.hash}
+              <br></br>
+              <strong>Time:</strong> {website.time}
+              <br></br>
+              <strong>Changed:</strong> {website.changed.toString()}
+              <br></br>
             </li>
           ))}
         </ul>
