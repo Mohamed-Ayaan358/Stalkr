@@ -80,7 +80,7 @@ func checkDivisibility() {
 	for _, interval := range checkIntervals {
 		if currentTime%interval == 0 {
 			fmt.Println(interval, currentTime%interval)
-			go database.QueryInterval(interval)
+			go routes.SendMessageToClient(interval)
 		}
 	}
 }

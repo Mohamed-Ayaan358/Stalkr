@@ -4,7 +4,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,7 +19,7 @@ func SetupRoutes() {
 	http.HandleFunc("/add", AddWebsite)
 	http.HandleFunc("/delete", DeleteWebsite)
 	http.HandleFunc("/websites", GetWebsites)
-	http.HandleFunc("/ws", handleWebSocket)
+	http.HandleFunc("/ws", HandleWebSocket)
 }
 
 // Add one yourself to obtain all the websites in the database
@@ -102,7 +101,7 @@ var (
 	}
 )
 
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Error upgrading to WebSocket: %v", err)
@@ -115,19 +114,28 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	WsMutex.Unlock()
 
 	for {
-		messageType, p, err := conn.ReadMessage()
+		messageType, _, err := conn.ReadMessage()
 		if err != nil {
 			log.Printf("Error reading message: %v", err)
 			return
 		}
-
-		// Print received message from client
-		fmt.Printf("Received from client: %s\n", p)
-
-		// Write "hello" back to the client
-		if err := conn.WriteMessage(messageType, []byte("hello from server")); err != nil {
+		if err := conn.WriteMessage(messageType, []byte("Server echo: ")); err != nil {
 			log.Printf("Error writing message: %v", err)
 			return
+		}
+	}
+}
+
+func SendMessageToClient(message int) {
+	WsMutex.Lock()
+	defer WsMutex.Unlock()
+
+	jsonified, _ := json.Marshal(database.QueryInterval(message))
+
+	if WsConn != nil {
+		err := WsConn.WriteMessage(websocket.TextMessage, jsonified)
+		if err != nil {
+			log.Printf("Error writing periodic message: %v", err)
 		}
 	}
 }

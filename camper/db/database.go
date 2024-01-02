@@ -79,13 +79,13 @@ func DeleteWebsite(websiteID int) error {
 	return nil
 }
 
-func QueryInterval(interval int) {
+func QueryInterval(interval int) []models.Website {
 
 	// Replace the query logic with your actual database query
 	rows, err := db.Query("SELECT * FROM websites WHERE time % ? = 0", interval)
 	if err != nil {
 		log.Println("Error querying database:", err)
-		return
+		return []models.Website{}
 	}
 	defer rows.Close()
 
@@ -97,7 +97,7 @@ func QueryInterval(interval int) {
 		err := rows.Scan(&website.ID, &website.Name, &website.URL, &website.Hash, &website.Time)
 		if err != nil {
 			log.Println("Error scanning website:", err)
-			return
+			return []models.Website{}
 
 		}
 
@@ -113,4 +113,5 @@ func QueryInterval(interval int) {
 
 	}
 	fmt.Println("Queried", len(websites), websites)
+	return websites
 }
