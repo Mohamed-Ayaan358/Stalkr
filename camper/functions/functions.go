@@ -29,10 +29,10 @@ func CalculateWebsiteHash(url string) (string, error) {
 	return hex.EncodeToString(hash[:]), nil
 }
 
-// cleanHTML removes unnecessary elements from HTML, like whitespace and comments
 func cleanHTML(htmlString string) string {
 	tokenizer := html.NewTokenizer(strings.NewReader(htmlString))
 	var cleanedHTML string
+	var insideScriptTag bool
 
 	for {
 		tokenType := tokenizer.Next()
@@ -42,12 +42,23 @@ func cleanHTML(htmlString string) string {
 			return cleanedHTML
 		case html.TextToken:
 			text := strings.TrimSpace(string(tokenizer.Text()))
-			if text != "" {
+			if text != "" && !insideScriptTag {
 				cleanedHTML += text + " "
 			}
 		case html.StartTagToken, html.SelfClosingTagToken:
 			tagName, _ := tokenizer.TagName()
-			cleanedHTML += "<" + string(tagName) + ">"
+			if strings.EqualFold(string(tagName), "script") {
+				insideScriptTag = true
+			} else {
+				cleanedHTML += "<" + string(tagName) + ">"
+			}
+		case html.EndTagToken:
+			tagName, _ := tokenizer.TagName()
+			if strings.EqualFold(string(tagName), "script") {
+				insideScriptTag = false
+			} else {
+				cleanedHTML += "</" + string(tagName) + ">"
+			}
 		}
 	}
 }
