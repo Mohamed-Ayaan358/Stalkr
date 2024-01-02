@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { connectWebSocket } from "./WebSocketExample";
+import { Website, connectWebSocket } from "./WebSocketExample";
 
 export default function Home() {
-  const [websocketData, setWebsocketData] = useState<Set<string>>(new Set());
+  const [websocketData, setWebsocketData] = useState<Website[]>([]);
 
   useEffect(() => {
     const socket = connectWebSocket("ws://localhost:8080/ws", (data) => {
       // Update the state with the new WebSocket data
-      setWebsocketData((prevData: any) => new Set([...prevData, data]));
+      setWebsocketData(data);
     });
 
     return () => {
@@ -22,8 +22,13 @@ export default function Home() {
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p>WebSocket Data:</p>
         <ul>
-          {Array.from(websocketData).map((data, index) => (
-            <li key={index}>{data}</li>
+          {websocketData.map((website, index) => (
+            <li key={index}>
+              <strong>ID:</strong> {website.id},<strong>Name:</strong>{" "}
+              {website.name},<strong>URL:</strong> {website.url},
+              <strong>Hash:</strong> {website.hash},<strong>Time:</strong>{" "}
+              {website.time}
+            </li>
           ))}
         </ul>
       </div>

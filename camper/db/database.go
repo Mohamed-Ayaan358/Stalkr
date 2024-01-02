@@ -80,9 +80,7 @@ func DeleteWebsite(websiteID int) error {
 }
 
 func QueryInterval(interval int) []models.Website {
-
-	// Replace the query logic with your actual database query
-	rows, err := db.Query("SELECT * FROM websites WHERE time % ? = 0", interval)
+	rows, err := db.Query("SELECT * FROM websites ")
 	if err != nil {
 		log.Println("Error querying database:", err)
 		return []models.Website{}
@@ -105,13 +103,13 @@ func QueryInterval(interval int) []models.Website {
 
 			var potentHash, _ = functions.CalculateWebsiteHash(website.URL)
 			if website.Hash != potentHash {
-				fmt.Printf("Previous hash %x\nContent Hash (SHA-256): %x\n", website.Hash, potentHash)
+				fmt.Println("Previous hash : ", website.Hash)
 				db.Exec("UPDATE websites SET hash = ? WHERE id = ?", potentHash, website.ID)
 			}
-			websites = append(websites, website)
 		}
+		websites = append(websites, website)
 
 	}
-	fmt.Println("Queried", len(websites), websites)
+	fmt.Println("Queried ", len(websites), websites)
 	return websites
 }

@@ -1,6 +1,15 @@
+export interface Website {
+  id: number;
+  name: string;
+  url: string;
+  hash: string;
+  time: number;
+}
+let receivedWebsites: Website[] = [];
+
 export const connectWebSocket = (
   url: string,
-  onMessage: (data: string) => void
+  onUpdateWebsites: (websites: Website[]) => void
 ) => {
   const socket = new WebSocket(url);
 
@@ -10,7 +19,19 @@ export const connectWebSocket = (
 
   socket.addEventListener("message", (event) => {
     console.log("Received message:", event.data);
-    onMessage(event.data);
+
+    // Assuming event.data is a JSON string representing an array of websites
+    try {
+      const data = JSON.parse(event.data);
+
+      // Update the receivedWebsites variable
+      receivedWebsites = data;
+
+      // Call the provided callback to update the state or perform any action
+      onUpdateWebsites(receivedWebsites);
+    } catch (error) {
+      console.error("Error parsing WebSocket message:", error);
+    }
   });
 
   socket.addEventListener("close", (event) => {
