@@ -4,6 +4,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -41,10 +42,19 @@ func GetWebsites(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	response := ApiResponse{
+		Message: "Success",
+		Data:    websites,
+	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(websites)
+	w.WriteHeader(200)
+
+	error := json.NewEncoder(w).Encode(response)
+	if error != nil {
+		http.Error(w, "Failed to encode response as JSON", http.StatusInternalServerError)
+	}
 }
+
 func AddWebsite(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -146,6 +156,7 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 func SendMessageToClient(message int) {
 	WsMutex.Lock()
 	defer WsMutex.Unlock()
+	fmt.Println("Hi entered sendmessagetoclient")
 
 	database.QueryInterval(message)
 	websites, _ := database.GetWebsites()

@@ -80,6 +80,7 @@ func DeleteWebsite(websiteID int) error {
 }
 
 func QueryInterval(interval int) []models.Website {
+	fmt.Println("Hi entered queryinterval")
 	rows, err := db.Query("SELECT * FROM websites ")
 	if err != nil {
 		log.Println("Error querying database:", err)

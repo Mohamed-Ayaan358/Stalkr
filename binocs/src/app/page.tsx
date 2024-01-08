@@ -2,18 +2,24 @@
 import { useEffect, useState } from "react";
 import { Website, connectWebSocket } from "./WebSocketExample";
 import ButtonModal from "./components/ButtonModal";
+import axios from "axios";
 
 export default function Home() {
   const [websocketData, setWebsocketData] = useState<Website[]>([]);
+  async function fetchData() {
+    axios.get("/api/websites").then((res) => {
+      setWebsocketData(res.data.data);
+    });
+    console.log("done");
+  }
 
   useEffect(() => {
+    fetchData();
     const socket = connectWebSocket("ws://localhost:8080/ws", (data) => {
-      // Update the state with the new WebSocket data
       setWebsocketData(data);
     });
 
     return () => {
-      // Clean up the WebSocket connection when the component unmounts
       socket.close();
     };
   }, []);
