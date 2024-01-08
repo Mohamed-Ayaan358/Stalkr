@@ -22,6 +22,11 @@ func SetupRoutes() {
 	http.HandleFunc("/ws", HandleWebSocket)
 }
 
+type ApiResponse struct {
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
 // Add one yourself to obtain all the websites in the database
 
 func GetWebsites(w http.ResponseWriter, r *http.Request) {
@@ -40,10 +45,9 @@ func GetWebsites(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(websites)
 }
-
 func AddWebsite(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -61,8 +65,21 @@ func AddWebsite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Website added successfully"))
+	// Respond with a JSON message
+	response := ApiResponse{
+		Message: "Website added successfully",
+		Data:    website, // You can include additional data if needed
+	}
+
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Failed to serialize JSON response", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(jsonResponse)
 }
 
 func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
