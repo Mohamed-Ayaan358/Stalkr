@@ -16,12 +16,25 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+
+
+@media screen and (max-width: 768px) {
+  td {
+    position: relative;
+    word-wrap: break-word;
+    max-width: 100px;
+  }
+
+  /* td:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: normal;
+    z-index: 1;
+    max-width: 200px;
+    word-wrap: break-word;
+  } */
 }
