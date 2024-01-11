@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const data = await req.json();
-    console.log(JSON.stringify(data));
 
     const apiResponse = await fetch("http://localhost:8080/add", {
       method: "POST",

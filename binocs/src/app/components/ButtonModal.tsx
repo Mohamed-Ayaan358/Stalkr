@@ -32,7 +32,6 @@ const ButtonModal = () => {
     try {
       // Instead of directly sending the request to the API server, send it to your Next.js API route
       const response = await axios.post("/api/add", formData);
-      console.log(response.data);
 
       closeModal();
     } catch (error) {

@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const data = await req.json();
-    console.log(data);
 
     const apiResponse = await fetch("http://localhost:8080/delete", {
       method: "POST",
@@ -18,7 +17,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     if (apiResponse.ok) {
       const responseData = await apiResponse.json();
-      console.log(responseData);
       return NextResponse.json(
         { data: responseData },
         { status: apiResponse.status }

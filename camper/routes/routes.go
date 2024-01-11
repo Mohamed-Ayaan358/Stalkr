@@ -96,7 +96,9 @@ func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-	var websiteName string
+	var websiteName struct {
+		Name string `json:"websiteName"`
+	}
 
 	err := json.NewDecoder(r.Body).Decode(&websiteName)
 	if err != nil {
@@ -104,14 +106,24 @@ func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.DeleteWebsite(websiteName)
+	err = database.DeleteWebsite(websiteName.Name)
 	if err != nil {
 		http.Error(w, "Failed to delete website from the database", http.StatusInternalServerError)
 		return
 	}
+	response := ApiResponse{
+		Message: "Website added successfully",
+	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Website deleted successfully"))
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Failed to serialize JSON response", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(jsonResponse)
 }
 
 // ------------------------------------------

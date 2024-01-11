@@ -13,8 +13,8 @@ export default function Home() {
       }
     });
   }
-  function deleteData(name: string) {
-    axios.post("/api/delete", { websiteName: name });
+  async function deleteData(name: string) {
+    const response = await axios.post("/api/delete", { websiteName: name });
   }
 
   useEffect(() => {
