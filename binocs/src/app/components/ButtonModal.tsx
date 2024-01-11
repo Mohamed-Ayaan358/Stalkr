@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import axios from "axios";
 
@@ -32,6 +33,7 @@ const ButtonModal = () => {
     try {
       // Instead of directly sending the request to the API server, send it to your Next.js API route
       const response = await axios.post("/api/add", formData);
+      location.reload();
 
       closeModal();
     } catch (error) {
