@@ -69,8 +69,8 @@ func GetWebsites() ([]models.Website, error) {
 	return websites, nil
 }
 
-func DeleteWebsite(websiteID int) error {
-	_, err := db.Exec("DELETE FROM websites WHERE id = ?", websiteID)
+func DeleteWebsite(websiteName string) error {
+	_, err := db.Exec("DELETE FROM websites WHERE name = ?", websiteName)
 	if err != nil {
 		log.Println("Error deleting website:", err)
 		return err

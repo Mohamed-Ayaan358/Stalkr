@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"sync"
 
 	database "camper/db"
@@ -46,15 +45,15 @@ func GetWebsites(w http.ResponseWriter, r *http.Request) {
 		Message: "Success",
 		Data:    websites,
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
 
-	error := json.NewEncoder(w).Encode(response)
-	if error != nil {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
 		http.Error(w, "Failed to encode response as JSON", http.StatusInternalServerError)
 	}
 }
-
 func AddWebsite(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -93,18 +92,19 @@ func AddWebsite(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteWebsite(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
+	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
+	var websiteName string
 
-	websiteID, err := strconv.Atoi(r.URL.Query().Get("id"))
+	err := json.NewDecoder(r.Body).Decode(&websiteName)
 	if err != nil {
 		http.Error(w, "Invalid website ID", http.StatusBadRequest)
 		return
 	}
 
-	err = database.DeleteWebsite(websiteID)
+	err = database.DeleteWebsite(websiteName)
 	if err != nil {
 		http.Error(w, "Failed to delete website from the database", http.StatusInternalServerError)
 		return

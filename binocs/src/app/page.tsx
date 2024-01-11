@@ -7,21 +7,33 @@ import axios from "axios";
 export default function Home() {
   const [websocketData, setWebsocketData] = useState<Website[]>([]);
   async function fetchData() {
-    axios.get("/api/websites").then((res) => {
-      setWebsocketData(res.data.data);
+    axios.get("/api/get").then((res) => {
+      if (res.data.data.data) {
+        setWebsocketData(res.data.data.data);
+      }
     });
-    console.log("done");
+  }
+  function deleteData(name: string) {
+    axios.post("/api/delete", { websiteName: name });
   }
 
   useEffect(() => {
-    fetchData();
     const socket = connectWebSocket("ws://localhost:8080/ws", (data) => {
       setWebsocketData(data);
     });
-
-    return () => {
-      socket.close();
-    };
+    if (socket.readyState === WebSocket.OPEN) {
+      fetchData();
+      return () => {
+        socket.close();
+      };
+    } else {
+      socket.addEventListener("open", () => {
+        fetchData();
+        return () => {
+          socket.close();
+        };
+      });
+    }
   }, []);
 
   function truncateText(text: any, maxLength: any) {
@@ -76,6 +88,15 @@ export default function Home() {
                   title={website.changed.toString()}
                 >
                   {website.changed.toString()}
+                </td>
+                <td
+                  className="border px-2 py-2"
+                  title={website.changed.toString()}
+                >
+                  <button onClick={() => deleteData(website.name)}>
+                    {" "}
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

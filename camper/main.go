@@ -74,7 +74,7 @@ func checkDivisibility() {
 	defer mu.Unlock()
 
 	currentTime := int(time.Now().Unix())
-	fmt.Println("Current time:", currentTime)
+	// fmt.Println("Current time:", currentTime)
 
 	// Check divisibility at each second
 	for _, interval := range checkIntervals {
