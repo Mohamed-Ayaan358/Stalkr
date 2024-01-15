@@ -3,6 +3,8 @@ package functions
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -23,6 +25,10 @@ func CalculateWebsiteHash(url string) (string, error) {
 		return "", err
 	}
 	cleanedHTML := cleanHTML(string(body))
+	fmt.Println(cleanedHTML)
+	if strings.Contains(cleanedHTML, "Enable JavaScript and cookies to continue") || strings.Contains(cleanedHTML, "Sorry, we just need to make sure you're not a robot.") {
+		return "The site cannot be viewed: JavaScript and cookies are required", errors.New("The site cannot be viewed: JavaScript and cookies are required")
+	}
 
 	hash := sha256.Sum256([]byte(cleanedHTML))
 
