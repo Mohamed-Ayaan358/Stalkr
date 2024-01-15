@@ -52,7 +52,6 @@ export default function TableContent() {
         <table className="min-w-full table-auto">
           <thead>
             <tr>
-              <th className=" py-2">ID</th>
               <th className=" py-2">Name</th>
               <th className=" py-2">URL</th>
               <th className=" py-2">Hash</th>
@@ -64,12 +63,6 @@ export default function TableContent() {
             {websocketData &&
               websocketData.map((website, index) => (
                 <tr key={index} className="bg-gray-100">
-                  <td
-                    className="border px-2 py-2"
-                    title={website.id.toString()}
-                  >
-                    {website.id}
-                  </td>
                   <td className="border px-2 py-2" title={website.name}>
                     {website.name}
                   </td>

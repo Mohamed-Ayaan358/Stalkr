@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const ButtonModal = () => {
@@ -40,6 +40,9 @@ const ButtonModal = () => {
       console.error("Error submitting form:", error);
     }
   };
+  useEffect(() => {
+    document.body.style.overflow = isModalOpen ? "hidden" : "auto";
+  }, [isModalOpen]);
 
   return (
     <>
@@ -51,7 +54,7 @@ const ButtonModal = () => {
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-10 overflow-y-auto ">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
@@ -62,7 +65,9 @@ const ButtonModal = () => {
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
             &#8203;
             <div
-              className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              className={`inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full ${
+                isModalOpen ? "slide-fwd-center" : ""
+              }`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-headline"
